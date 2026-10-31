@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Walnus SmartView Pro - Site Estimation Console</title>
+    <meta name="description" content="Professional mobile-first on-site structural estimation and surface coating console with advanced settings, auto-save, and hardware diagnostics." />
+    <meta property="og:title" content="Walnus SmartView Pro - Site Estimation Console" />
+    <meta property="og:description" content="Professional mobile-first on-site structural estimation and surface coating console with advanced settings, auto-save, and hardware diagnostics." />
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('paint_sync_theme_settings_v2');
+          var theme = saved ? JSON.parse(saved) : null;
+          var mode = theme ? theme.mode : 'dark';
+          var accent = theme ? theme.accent : 'indigo';
+          var compact = theme ? theme.compactDensity : true;
+          
+          var isDark = mode === 'dark';
+          if (mode === 'system') {
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          }
+          
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark');
+            root.classList.remove('light');
+          } else {
+            root.classList.add('light');
+            root.classList.remove('dark');
+          }
+          
+          root.classList.add('theme-' + accent);
+          if (compact) {
+            root.setAttribute('data-density', 'compact');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

@@ -1,0 +1,8 @@
+{
+	"appId": "com.walnus.smartview",
+	"appName": "Walnus SmartView Pro",
+	"webDir": "dist",
+	"server": {
+		"androidScheme": "https"
+	}
+}

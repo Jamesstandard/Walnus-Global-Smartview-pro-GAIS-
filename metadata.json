@@ -1,0 +1,12 @@
+{
+  "name": "Walnus SmartView Pro - Site Estimation Console",
+  "description": "Professional mobile-first on-site structural estimation and surface coating console with advanced settings, auto-save, and hardware diagnostics.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
