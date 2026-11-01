@@ -1,20 +1,23 @@
-name: Build Android Debug APK
+name: Build, Push & Activate Android APK
 
 on:
   push:
     branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  build-apk:
-    name: Build & Export Android APK
+  build-and-deploy:
+    name: Build & Deploy SmartView Pro APK
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Node.js 20
         uses: actions/setup-node@v4
@@ -54,11 +57,36 @@ jobs:
           ./gradlew assembleDebug --stacktrace
           cd ..
           cp android/app/build/outputs/apk/debug/app-debug.apk ./app-debug.apk
-          echo "APK successfully generated and moved to project root directory: ./app-debug.apk"
 
-      - name: Upload Debug APK Artifact
-        uses: actions/upload-artifact@v4
+      - name: Commit and Push APK to Root
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add app-debug.apk
+          if git diff --staged --quiet; then
+            echo "No changes to APK"
+          else
+            git commit -m "chore: update android debug apk [skip ci]"
+            git push origin HEAD:${{ github.ref }}
+          fi
+
+      - name: Create Release & Activate
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         with:
-          name: walnus-smartview-pro-debug-apk
-          path: ./app-debug.apk
-          retention-days: 14
+          files: app-debug.apk
+          tag_name: v${{ github.run_number }}
+          name: SmartView Pro Build v${{ github.run_number }}
+          body: |
+            Automated production build for SmartView Pro™ West Africa.
+            
+            **Changes:**
+            - Latest structural estimation logic
+            - Updated Market Intelligence (50-mile radius)
+            - Fixed UI offsets and localization (NGN)
+            
+            [Download APK](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/app-debug.apk?raw=true)
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
