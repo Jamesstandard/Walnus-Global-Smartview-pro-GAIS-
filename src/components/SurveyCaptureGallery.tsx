@@ -26,6 +26,7 @@ import {
 import { surveyCaptureRepository } from '../lib/surveyCaptureRepository';
 import { playClickSound, playAlertChime, playSuccessSound } from '../lib/soundUtils';
 import { SurfaceVisualizerWorkspace } from './SurfaceVisualizerWorkspace';
+import { ConfirmModal } from './ConfirmModal';
 
 interface SurveyCaptureGalleryProps {
   activeSurvey: Survey;
@@ -45,6 +46,7 @@ export function SurveyCaptureGallery({
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<string>('ALL');
   const [isVisualizerOpen, setIsVisualizerOpen] = useState<boolean>(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; captureId: string | null }>({ isOpen: false, captureId: null });
 
   const loadCaptures = useCallback(async () => {
     if (!activeSurvey?.id) return;
@@ -83,9 +85,13 @@ export function SurveyCaptureGallery({
   const handleDeleteCapture = async (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     playAlertChime('warning');
-    if (!window.confirm('Delete this survey capture? The metadata and local image storage will be permanently removed.')) {
-      return;
-    }
+    setDeleteConfirmation({ isOpen: true, captureId: id });
+  };
+
+  const confirmDelete = async () => {
+    const id = deleteConfirmation.captureId;
+    if (!id) return;
+
     setIsDeleting(id);
     try {
       await surveyCaptureRepository.deleteCapture(id);
@@ -99,6 +105,7 @@ export function SurveyCaptureGallery({
       console.error('Failed to delete capture:', err);
     } finally {
       setIsDeleting(null);
+      setDeleteConfirmation({ isOpen: false, captureId: null });
     }
   };
 
@@ -109,6 +116,13 @@ export function SurveyCaptureGallery({
 
   return (
     <div className="flex flex-col h-full bg-slate-950 text-slate-100 font-sans">
+      <ConfirmModal
+        isOpen={deleteConfirmation.isOpen}
+        title="Delete Capture"
+        message="Delete this survey capture? The metadata and local image storage will be permanently removed."
+        onConfirm={confirmDelete}
+        onClose={() => setDeleteConfirmation({ isOpen: false, captureId: null })}
+      />
       {/* Top Banner */}
       <div className="px-4 py-3 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
@@ -287,7 +301,7 @@ export function SurveyCaptureGallery({
 
       {/* Full-Resolution Modal Preview */}
       {selectedCapture && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/95 backdrop-blur-md">
+        <div className="fixed top-[86px] inset-x-0 bottom-0 z-50 flex items-center justify-center p-3 bg-slate-950/95 backdrop-blur-md">
           <div className="w-full max-w-2xl bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] animate-in fade-in duration-200">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/80">

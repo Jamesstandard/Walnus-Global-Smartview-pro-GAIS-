@@ -147,6 +147,7 @@ export function Reconstruction3DModeControls({
               'video_to_3d_splat',
               'spatial_hud',
               'chemical_formulation',
+              'studio_scene',
             ] as const
           ).map((mId) => {
             const def = STUDIO_3D_MODES[mId];

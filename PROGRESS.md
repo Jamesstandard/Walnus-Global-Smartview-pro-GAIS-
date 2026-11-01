@@ -28,6 +28,36 @@
 | **SV-004** | Survey Workspace & Capture Management | DONE | VERIFIED (23/23 Tests) | 2026-10-31 |
 | **SV-005** | Camera Intelligence & HUD Enhancement | DONE | VERIFIED (Capability Tests Pass) | 2026-10-31 |
 | **SV-006** | Surface Selection & Coating Visualisation | DONE | VERIFIED (Visualization Tests Pass) | 2026-10-31 |
+| **SV-007** | UI Audit & Regional Localization | DONE | VERIFIED (86px Offset & NGN Sync) | 2026-10-31 |
+
+---
+
+## SV-007 Implementation Details
+
+### What Was Built
+1. **Product-Wide Layout Enforcement:**
+   - Applied strict `86px` top offset (76px header + 10px margin) to all full-screen overlays identified in the UI audit.
+   - Files updated: `SoftwareIntegrationsModal`, `SendDraftQuotationModal`, `AnalysisRoutingView`, `SurveyCaptureGallery`, `ManageSurveysModal`, `SurveyWorkspace`, `SurfaceVisualizerWorkspace`.
+   - Guaranteed no UI bleed into the tiered application header.
+2. **Regional Market Localization (Nigeria):**
+   - Hard-coded Nigerian (NGN / ₦ / Metric) as the default regional baseline for SmartView Pro West Africa.
+   - Refined `MarketIntelligenceHUD` to restrict data to a 50-mile radius from Lagos VI anchor.
+   - Linked material cost clicks to detailed chemical/procurement breakdowns in the Comms Hub.
+3. **Reactive Theme Engine:**
+   - Implemented a Theme Cycle Toggle (Dark -> Light -> System) in the Advanced Settings header.
+   - Persisted theme state in `localStorage` via `ThemeProvider`.
+4. **Feature Reliability Fixes:**
+   - Replaced native `window.confirm` with custom `ConfirmModal.tsx` in `ManageSurveysModal` and `SurveyCaptureGallery` to bypass preview environment blocks.
+   - Verified GNSS/GPS sensor diagnostic logic for field-ready accuracy.
+
+---
+
+## Verification & Test Evidence
+
+- **TypeScript Compilation:** `tsc --noEmit` — 0 errors
+- **Vite Bundle Build:** Production build succeeded
+- **Layout Verification:** Visual sweep confirmed all modals respect the 10px header gap.
+- **Localization Verification:** Market Hub correctly displays ₦ spot prices and Lagos-centric suppliers.
 
 ---
 

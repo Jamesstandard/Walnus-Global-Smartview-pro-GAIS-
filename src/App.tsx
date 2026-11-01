@@ -292,8 +292,8 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Full-Bleed Viewport Container */}
-      <main className="fixed inset-0 w-screen h-screen z-0 overflow-hidden bg-slate-950 hardware-accelerated">
+      {/* Main Full-Bleed Viewport Container (Positioned 10px below 76px header) */}
+      <main className="fixed top-[86px] inset-x-0 bottom-0 z-0 overflow-hidden bg-slate-950 hardware-accelerated">
         <AnimatePresence mode="wait">
           {activeTab === 'estimator' ? (
             <motion.div
@@ -320,7 +320,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="w-full h-full relative inset-0 pt-10 overflow-y-auto"
+              className="w-full h-full overflow-y-auto"
             >
               <MixerApp onOpenWorkspace={() => setIsWorkspaceOpen(true)} />
             </motion.div>

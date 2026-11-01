@@ -459,7 +459,7 @@ export function AdvancedSettingsPanel({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-xs font-sans hardware-accelerated">
+      <div className="fixed top-[86px] inset-x-0 bottom-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-xs font-sans hardware-accelerated">
         <motion.div
           initial={{ opacity: 0, y: 30, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -489,6 +489,29 @@ export function AdvancedSettingsPanel({
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
+              {/* Theme Cycle Toggle Button */}
+              <button
+                type="button"
+                onClick={() => {
+                  playToggleSound(true);
+                  const modes: ThemeMode[] = ['dark', 'light', 'system'];
+                  const currentIndex = modes.indexOf(themeSettings.mode);
+                  const nextMode = modes[(currentIndex + 1) % modes.length];
+                  handleThemeModeChange(nextMode);
+                }}
+                className="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 transition-all shrink-0 flex items-center gap-1.5"
+                title={`Cycle Theme (Current: ${themeSettings.mode})`}
+              >
+                {themeSettings.mode === 'dark' ? (
+                  <Moon className="w-4 h-4 text-indigo-400" />
+                ) : themeSettings.mode === 'light' ? (
+                  <Sun className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <Monitor className="w-4 h-4 text-sky-400" />
+                )}
+                <span className="text-[10px] font-mono font-bold uppercase hidden sm:inline">Theme</span>
+              </button>
+
               {/* Pin & Expand Button */}
               <button
                 type="button"

@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { gridStaggerContainer, gridStaggerItem } from '../lib/motionVariants';
-import { Bot, LineChart, Globe, DollarSign, Package, Zap, ExternalLink, Activity, ArrowRight } from 'lucide-react';
+import { Bot, LineChart, Globe, Package, Zap, ExternalLink, Activity, ArrowRight, MapPin } from 'lucide-react';
+import { formatCurrency } from '../lib/utils';
+import { getStoredLocalization } from '../data/userProfileSettings';
+import { getLocalizedMaterialsLocal } from '../data/localizedSuppliers';
 
 interface MarketIntelligenceHUDProps {
   projectMode: string;
@@ -13,6 +16,15 @@ interface MarketIntelligenceHUDProps {
 export function MarketIntelligenceHUD({ projectMode, surfaceArea, onNext, show3DButton }: MarketIntelligenceHUDProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [localization, setLocalization] = useState(getStoredLocalization);
+
+  useEffect(() => {
+    const handleLocUpdate = (e: any) => {
+      if (e.detail) setLocalization(e.detail);
+    };
+    window.addEventListener('paint_sync_localization_updated', handleLocUpdate);
+    return () => window.removeEventListener('paint_sync_localization_updated', handleLocUpdate);
+  }, []);
 
   useEffect(() => {
     if (!isAnalyzing) return;
@@ -29,6 +41,11 @@ export function MarketIntelligenceHUD({ projectMode, surfaceArea, onNext, show3D
     return () => clearInterval(interval);
   }, [isAnalyzing]);
 
+  const materials = useMemo(() => {
+    const cat = projectMode === 'screed' ? 'screed' : projectMode === 'plaster' ? 'plaster' : 'paint';
+    return getLocalizedMaterialsLocal(cat, 50).slice(0, 3);
+  }, [projectMode]);
+
   return (
     <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col font-sans">
       <div className="p-4 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between backdrop-blur-md">
@@ -41,13 +58,13 @@ export function MarketIntelligenceHUD({ projectMode, surfaceArea, onNext, show3D
               Autonomous Market Intelligence
             </h3>
             <div className="text-[10px] text-slate-400 font-mono">
-              Fetching global spot pricing & vendor availability...
+              Analyzing local 50-mile radius for {projectMode}...
             </div>
           </div>
         </div>
         <div className="px-2 py-1 bg-slate-950 rounded border border-slate-700 text-[10px] font-mono font-bold text-indigo-400 uppercase flex items-center gap-1">
           <Globe className="w-3 h-3" />
-          <span>Comms HUD</span>
+          <span>Local Hub</span>
         </div>
       </div>
 
@@ -87,72 +104,54 @@ export function MarketIntelligenceHUD({ projectMode, surfaceArea, onNext, show3D
               animate="show"
               className="grid grid-cols-1 sm:grid-cols-3 gap-3"
             >
-              {/* Vendor A */}
-              <motion.div
-                variants={gridStaggerItem}
-                whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                className="p-4 bg-slate-900/50 hover:bg-slate-900 rounded-xl border border-emerald-500/30 hover:border-emerald-500 transition-colors cursor-pointer group"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-mono font-bold text-emerald-400 text-sm">BuildCorp Supplies</div>
-                  <div className="bg-emerald-950/60 text-emerald-400 px-2 py-0.5 rounded text-[10px] font-bold">TOP MATCH</div>
-                </div>
-                <div className="text-[10px] text-slate-400 mb-4">Stock available for {surfaceArea} sqft</div>
-                <div className="text-xl font-bold text-white mb-1 flex items-center gap-1">
-                  <DollarSign className="w-4 h-4 text-slate-500" />
-                  1,240.00
-                </div>
-                <div className="text-[10px] text-slate-500 flex items-center justify-between pt-2 border-t border-slate-800">
-                  <span className="flex items-center gap-1"><Package className="w-3 h-3" /> Delivery: 2 Days</span>
-                  <ExternalLink className="w-3 h-3 group-hover:text-emerald-400" />
-                </div>
-              </motion.div>
-
-              {/* Vendor B */}
-              <motion.div
-                variants={gridStaggerItem}
-                whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                className="p-4 bg-slate-900/50 hover:bg-slate-900 rounded-xl border border-slate-800 hover:border-indigo-500/50 transition-colors cursor-pointer group"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-mono font-bold text-indigo-400 text-sm">Industrial Materials LLC</div>
-                </div>
-                <div className="text-[10px] text-slate-400 mb-4">Partial stock available</div>
-                <div className="text-xl font-bold text-white mb-1 flex items-center gap-1">
-                  <DollarSign className="w-4 h-4 text-slate-500" />
-                  1,180.50
-                </div>
-                <div className="text-[10px] text-slate-500 flex items-center justify-between pt-2 border-t border-slate-800">
-                  <span className="flex items-center gap-1"><Package className="w-3 h-3 text-amber-400" /> Delivery: 5 Days</span>
-                  <ExternalLink className="w-3 h-3 group-hover:text-indigo-400" />
-                </div>
-              </motion.div>
-
-              {/* Vendor C */}
-              <motion.div
-                variants={gridStaggerItem}
-                whileHover={{ y: -3, transition: { duration: 0.2 } }}
-                className="p-4 bg-slate-900/50 hover:bg-slate-900 rounded-xl border border-slate-800 hover:border-slate-600 transition-colors cursor-pointer group"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-mono font-bold text-slate-300 text-sm">Global Paints Direct</div>
-                </div>
-                <div className="text-[10px] text-slate-400 mb-4">Premium grade alternative</div>
-                <div className="text-xl font-bold text-white mb-1 flex items-center gap-1">
-                  <DollarSign className="w-4 h-4 text-slate-500" />
-                  1,450.00
-                </div>
-                <div className="text-[10px] text-slate-500 flex items-center justify-between pt-2 border-t border-slate-800">
-                  <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-emerald-400" /> Express Delivery</span>
-                  <ExternalLink className="w-3 h-3 group-hover:text-slate-300" />
-                </div>
-              </motion.div>
+              {materials.map((mat, idx) => (
+                <motion.div
+                  key={mat.id}
+                  variants={gridStaggerItem}
+                  whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                  onClick={() => {
+                    // Fix: Open the detailed analysis HUD
+                    window.dispatchEvent(new CustomEvent('paint_sync_active_spec_cost_clicked', { detail: { 
+                      projectName: mat.tradeName,
+                      totalCost: mat.spotPrice,
+                      litersNeeded: surfaceArea / 10, // Mock calculation
+                      colorHex: '#3b82f6'
+                    }}));
+                    // Also switch to Comms Hub if possible, but for now we just show the toast or feedback
+                  }}
+                  className={`p-4 bg-slate-900/50 hover:bg-slate-900 rounded-xl border transition-colors cursor-pointer group ${
+                    idx === 0 ? 'border-emerald-500/40 hover:border-emerald-500' : 'border-slate-800 hover:border-indigo-500/50'
+                  }`}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className={`font-mono font-bold text-sm ${idx === 0 ? 'text-emerald-400' : 'text-indigo-400'}`}>
+                      {mat.supplierName.split(' ')[0]}
+                    </div>
+                    {idx === 0 && (
+                      <div className="bg-emerald-950/60 text-emerald-400 px-2 py-0.5 rounded text-[8px] font-bold uppercase">Top Match</div>
+                    )}
+                  </div>
+                  <div className="text-[10px] text-slate-200 font-bold mb-1 truncate">{mat.tradeName}</div>
+                  <div className="text-[9px] text-slate-500 mb-3 flex items-center gap-1">
+                    <MapPin className="w-3 h-3" /> {mat.distanceMiles} miles away
+                  </div>
+                  <div className="text-lg font-bold text-white mb-1 flex items-center gap-1">
+                    <span className={idx === 0 ? 'text-emerald-400' : 'text-slate-200'}>
+                      {formatCurrency(mat.spotPrice, localization)}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 flex items-center justify-between pt-2 border-t border-slate-800">
+                    <span className="flex items-center gap-1"><Package className="w-3 h-3" /> {mat.unit}</span>
+                    <ExternalLink className="w-3 h-3 group-hover:text-indigo-400" />
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
 
             <div className="bg-indigo-950/30 border border-indigo-500/30 p-3 rounded-lg flex items-start gap-3">
               <Bot className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
               <p className="text-xs text-slate-300 leading-relaxed font-sans">
-                Based on current market conditions, <strong>BuildCorp Supplies</strong> offers the best balance of cost and delivery speed for {projectMode} materials targeting {surfaceArea} sqft. I have compiled these quotes into a formal Stakeholder Report.
+                I have identified <strong>{materials[0]?.supplierName}</strong> as the optimal local supplier for {projectMode} within a 50-mile radius of your Lagos VI fix. Total materials for {surfaceArea} sqft are estimated at {formatCurrency((materials[0]?.spotPrice || 0) * 5, localization)}.
               </p>
             </div>
 

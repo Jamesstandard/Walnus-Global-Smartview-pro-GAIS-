@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { LocalizedRegionalMaterial } from '../types';
-import { LOCALIZED_REGIONAL_MATERIALS, CURRENT_JOB_SITE } from '../data/localizedSuppliers';
+import { LOCALIZED_REGIONAL_MATERIALS, CURRENT_JOB_SITE, getLocalizedMaterialsLocal } from '../data/localizedSuppliers';
 import { formatCurrency, generateId } from '../lib/utils';
 import { saveMessageOffline } from '../db';
 import { showAppToast } from './ToastNotificationCenter';
+import { getStoredLocalization } from '../data/userProfileSettings';
 import {
   Compass,
   Navigation,
@@ -48,6 +49,7 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
   const [activeSpecBreakdown, setActiveSpecBreakdown] = useState<any | null>(null);
   const [isBreakdownCollapsed, setIsBreakdownCollapsed] = useState(false);
   const [choiceUpdating, setChoiceUpdating] = useState<string | null>(null);
+  const [localization, setLocalization] = useState(getStoredLocalization());
 
   const playClickSound = () => {
     try {
@@ -56,6 +58,14 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
       audio.play().catch(() => {});
     } catch {}
   };
+
+  useEffect(() => {
+    const handleLocUpdate = (e: any) => {
+      if (e.detail) setLocalization(e.detail);
+    };
+    window.addEventListener('paint_sync_localization_updated', handleLocUpdate);
+    return () => window.removeEventListener('paint_sync_localization_updated', handleLocUpdate);
+  }, []);
 
   useEffect(() => {
     const handleSpecCostClicked = (e: any) => {
@@ -83,18 +93,13 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
   };
 
   const filteredMaterials = useMemo(() => {
-    return LOCALIZED_REGIONAL_MATERIALS.filter((mat) => {
-      // Category match
-      if (selectedCategory !== 'all' && mat.materialType !== selectedCategory) return false;
+    // Start with local materials within 50 miles
+    let materials = getLocalizedMaterialsLocal(selectedCategory, 50);
 
-      // Proximity filter
-      if (selectedProximity === '5km' && mat.distanceKm > 5.0) return false;
-      if (selectedProximity === '10km' && mat.distanceKm > 10.0) return false;
-
-      // Search query match
-      if (!searchQuery.trim()) return true;
+    // Apply search query match
+    if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      return (
+      materials = materials.filter((mat) =>
         mat.name.toLowerCase().includes(q) ||
         mat.tradeName.toLowerCase().includes(q) ||
         mat.standardSpec.toLowerCase().includes(q) ||
@@ -102,8 +107,10 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
         mat.fullAddress.toLowerCase().includes(q) ||
         mat.category.toLowerCase().includes(q)
       );
-    });
-  }, [selectedCategory, searchQuery, selectedProximity]);
+    }
+    
+    return materials;
+  }, [selectedCategory, searchQuery]);
 
   const handleShareToComms = async (mat: LocalizedRegionalMaterial, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -113,7 +120,7 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
       id: generateId(),
       sender: 'Estimator',
       recipient: 'Mixer & Field Team',
-      text: `[REGIONAL MARKET INTEL - ${mat.materialType.toUpperCase()}]: Sourced "${mat.tradeName}" from ${mat.supplierName} (${mat.distanceKm} km from site, ${mat.fullAddress}). Price: ${formatCurrency(mat.spotPrice)} / ${mat.unit} (${mat.marketTrend === 'down' ? '↓' : '↑'} ${Math.abs(mat.trendPercentage)}%). Stock: ${mat.stockQuantity} units (${mat.stockStatus}). GPS: ${mat.gpsCoordinates.lat}, ${mat.gpsCoordinates.lng}`,
+      text: `[REGIONAL MARKET INTEL - ${mat.materialType.toUpperCase()}]: Sourced "${mat.tradeName}" from ${mat.supplierName} (${mat.distanceKm} km from site, ${mat.fullAddress}). Price: ${formatCurrency(mat.spotPrice, localization)} / ${mat.unit} (${mat.marketTrend === 'down' ? '↓' : '↑'} ${Math.abs(mat.trendPercentage)}%). Stock: ${mat.stockQuantity} units (${mat.stockStatus}). GPS: ${mat.gpsCoordinates.lat}, ${mat.gpsCoordinates.lng}`,
       timestamp: Date.now(),
       syncStatus: 'pending',
       type: 'text',
@@ -335,7 +342,7 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
                       </div>
                       <div>
                         <span className="text-slate-500 block text-[8px] uppercase font-bold">Total Est. cost</span>
-                        <strong className="text-emerald-400">{formatCurrency(activeSpecBreakdown.totalCost || 0)}</strong>
+                        <strong className="text-emerald-400">{formatCurrency(activeSpecBreakdown.totalCost || 0, localization)}</strong>
                       </div>
                     </div>
 
@@ -404,8 +411,8 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
                                       </td>
                                       <td className="py-1 text-center">{chem.pct}%</td>
                                       <td className="py-1 text-right">{chemMass.toFixed(1)}</td>
-                                      <td className="py-1 text-right">{formatCurrency(chem.rate * 1200)}</td>
-                                      <td className="py-1 text-right text-slate-200">{formatCurrency(chemCost * 1200)}</td>
+                                      <td className="py-1 text-right">{formatCurrency(chem.rate * 1000, localization)}</td>
+                                      <td className="py-1 text-right text-slate-200">{formatCurrency(chemCost * 1000, localization)}</td>
                                     </tr>
                                   );
                                 });
@@ -420,7 +427,7 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
                         <div className="border-b border-slate-800 pb-1.5">
                           <span className="text-[11px] font-bold text-slate-300 font-mono flex items-center gap-1">
                             <Truck className="w-3.5 h-3.5 text-emerald-400" />
-                            Supplier Proximity (Frankfurt Geo-Zone)
+                            Supplier Proximity ({CURRENT_JOB_SITE.city})
                           </span>
                         </div>
                         
@@ -473,7 +480,7 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
                             Procurement Calibration
                           </span>
                           <span className="text-[11px] font-extrabold text-amber-300 font-mono tracking-tight block">
-                            $ave money || or better quality. It's up to you...
+                            Save money || or better quality. It's up to you...
                           </span>
                         </div>
                         <span className="text-[10px] text-slate-500 font-mono font-bold">
@@ -505,7 +512,7 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
                           
                           <div className="space-y-0.5 flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-1">
-                              <span className="font-bold text-[11px] tracking-tight block">$ave Money (Eco-Chalk Spec)</span>
+                              <span className="font-bold text-[11px] tracking-tight block">Save Money (Eco-Chalk Spec)</span>
                               <span className="text-[8px] bg-emerald-500/20 text-emerald-300 px-1 py-0.2 rounded font-extrabold">
                                 -35% COST
                               </span>
@@ -626,7 +633,7 @@ export function CommsMarketIntelPanel({ onOpenGpsMap }: CommsMarketIntelPanelPro
                   {/* Spot Price & Trend Badge */}
                   <div className="flex sm:flex-col items-center sm:items-end justify-between gap-1 shrink-0 bg-slate-950 sm:bg-transparent p-2 sm:p-0 rounded-lg border sm:border-0 border-slate-800">
                     <div className="text-xs font-bold font-mono text-emerald-400">
-                      {formatCurrency(mat.spotPrice)} <span className="text-[10px] text-slate-400 font-normal">/ {mat.unit}</span>
+                      {formatCurrency(mat.spotPrice, localization)} <span className="text-[10px] text-slate-400 font-normal">/ {mat.unit}</span>
                     </div>
                     <div className="flex items-center gap-1 text-[10px] font-mono">
                       {mat.marketTrend === 'down' ? (

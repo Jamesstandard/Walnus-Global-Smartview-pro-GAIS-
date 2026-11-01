@@ -73,6 +73,7 @@ export function FileManagementMenu({
         id="file-management-hamburger-btn"
         type="button"
         onClick={() => {
+          console.log('Hamburger clicked, current isOpen:', isOpen);
           playClickSound();
           setIsOpen(!isOpen);
         }}
@@ -104,7 +105,7 @@ export function FileManagementMenu({
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -5 }}
                 transition={{ duration: 0.12 }}
-                className="fixed right-2 top-11 w-64 bg-slate-900/98 backdrop-blur-xl border border-amber-500/40 rounded-xl shadow-2xl z-[9999] overflow-hidden font-mono text-xs text-slate-100 divide-y divide-slate-800"
+                className="fixed right-2 top-[86px] w-64 bg-slate-900/98 backdrop-blur-xl border border-amber-500/40 rounded-xl shadow-2xl z-[9999] overflow-hidden font-mono text-xs text-slate-100 divide-y divide-slate-800"
               >
                 {/* Menu Header */}
                 <div className="p-2.5 bg-slate-950/90 flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-800">

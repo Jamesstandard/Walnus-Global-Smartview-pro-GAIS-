@@ -15,6 +15,7 @@ import { Survey } from '../types';
 import { surveyCaptureRepository } from '../lib/surveyCaptureRepository';
 import { generateId } from '../lib/utils';
 import { playClickSound, playSuccessSound, playAlertChime } from '../lib/soundUtils';
+import { ConfirmModal } from './ConfirmModal';
 
 interface ManageSurveysModalProps {
   currentProjectId: string;
@@ -34,6 +35,7 @@ export function ManageSurveysModal({
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; survey: Survey | null }>({ isOpen: false, survey: null });
 
   const loadSurveys = async () => {
     try {
@@ -76,8 +78,12 @@ export function ManageSurveysModal({
   const handleDeleteSurvey = async (survey: Survey, e: React.MouseEvent) => {
     e.stopPropagation();
     playAlertChime('warning');
-    const confirmMsg = `Delete "${survey.title}"?\n\nWARNING: All ${survey.captureCount || 0} associated photo captures and local media files will be cascade deleted immediately.`;
-    if (!window.confirm(confirmMsg)) return;
+    setDeleteConfirmation({ isOpen: true, survey });
+  };
+
+  const confirmDelete = async () => {
+    const survey = deleteConfirmation.survey;
+    if (!survey) return;
 
     setIsDeleting(survey.id);
     try {
@@ -88,11 +94,19 @@ export function ManageSurveysModal({
       console.error('Failed to cascade delete survey:', err);
     } finally {
       setIsDeleting(null);
+      setDeleteConfirmation({ isOpen: false, survey: null });
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/90 backdrop-blur-md">
+    <div className="fixed top-[86px] inset-x-0 bottom-0 z-50 flex items-center justify-center p-3 bg-slate-950/90 backdrop-blur-md">
+      <ConfirmModal
+        isOpen={deleteConfirmation.isOpen}
+        title="Delete Survey"
+        message={`Delete survey "${deleteConfirmation.survey?.title}"?\n\nWARNING: All ${deleteConfirmation.survey?.captureCount || 0} associated photo captures and local media files will be cascade deleted immediately.`}
+        onConfirm={confirmDelete}
+        onClose={() => setDeleteConfirmation({ isOpen: false, survey: null })}
+      />
       <div className="w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in duration-200">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/80">

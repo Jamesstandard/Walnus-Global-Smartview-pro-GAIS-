@@ -167,7 +167,7 @@ export function FloatingMinimizedPanels({
         scale: isObstructed ? 0.9 : 1,
       }}
       transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-row flex-wrap justify-center gap-2 items-center select-none pointer-events-none font-mono w-full px-4"
+      className="fixed top-[86px] left-1/2 -translate-x-1/2 z-50 flex flex-row flex-wrap justify-center gap-2 items-center select-none pointer-events-none font-mono w-full px-4"
     >
       <AnimatePresence>
         {panelList.map((id) => {

@@ -570,7 +570,7 @@ export function SurveyWorkspace({
       {/* Edit Details Modal */}
       <AnimatePresence>
         {isEditModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/90 backdrop-blur-md">
+          <div className="fixed top-[86px] inset-x-0 bottom-0 z-50 flex items-center justify-center p-3 bg-slate-950/90 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

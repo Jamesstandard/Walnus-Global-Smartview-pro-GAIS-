@@ -8,7 +8,8 @@ export type Studio3DActiveMode =
   | 'image_to_3d'
   | 'video_to_3d_splat'
   | 'spatial_hud'
-  | 'chemical_formulation';
+  | 'chemical_formulation'
+  | 'studio_scene';
 
 export interface Studio3DModeDefinition {
   id: Studio3DActiveMode;
@@ -56,6 +57,15 @@ export const STUDIO_3D_MODES: Record<Studio3DActiveMode, Studio3DModeDefinition>
     description: 'Real-time dry film thickness (DFT), solids by volume %, cure kinetics, and Bill of Materials (BOM) for coatings/screeds/plasters.',
     iconName: 'FlaskConical',
     badge: 'Stoichiometry',
+  },
+  studio_scene: {
+    id: 'studio_scene',
+    name: '3D Studio Scene',
+    shortName: '3D Studio',
+    tagline: 'Procedural Architectural Scene',
+    description: 'High-fidelity procedural architectural studio scene.',
+    iconName: 'Box',
+    badge: '3D Studio',
   },
 };
 

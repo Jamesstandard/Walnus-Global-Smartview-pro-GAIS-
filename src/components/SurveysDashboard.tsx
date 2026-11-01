@@ -15,22 +15,15 @@ import {
   Camera,
   MapPin,
   Building2,
-  Calendar,
   User,
   Trash2,
   Check,
-  ChevronRight,
-  Filter,
-  Sparkles,
   ArrowRight,
-  Clock,
-  ShieldCheck,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Survey } from '../types';
 import { surveyCaptureRepository } from '../lib/surveyCaptureRepository';
-import { NewSurveyModal } from './NewSurveyModal';
 import { playClickSound, playSuccessSound, playAlertChime } from '../lib/soundUtils';
+import { ConfirmModal } from './ConfirmModal';
 
 interface SurveysDashboardProps {
   activeSurveyId: string | null;
@@ -47,6 +40,7 @@ export function SurveysDashboard({
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'active' | 'completed' | 'archived'>('ALL');
   const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; survey: Survey | null }>({ isOpen: false, survey: null });
 
   const loadSurveys = async () => {
     try {
@@ -86,8 +80,12 @@ export function SurveysDashboard({
   const handleDeleteSurvey = async (survey: Survey, e: React.MouseEvent) => {
     e.stopPropagation();
     playAlertChime('warning');
-    const confirmMsg = `Delete survey "${survey.title}"?\n\nWARNING: All ${survey.captureCount || 0} associated photo captures and local media files will be cascade deleted immediately.`;
-    if (!window.confirm(confirmMsg)) return;
+    setDeleteConfirmation({ isOpen: true, survey });
+  };
+
+  const confirmDelete = async () => {
+    const survey = deleteConfirmation.survey;
+    if (!survey) return;
 
     setIsDeletingId(survey.id);
     try {
@@ -98,11 +96,19 @@ export function SurveysDashboard({
       console.error('Failed to delete survey:', err);
     } finally {
       setIsDeletingId(null);
+      setDeleteConfirmation({ isOpen: false, survey: null });
     }
   };
 
   return (
     <div className="flex flex-col h-full bg-slate-950 text-slate-100 font-sans overflow-hidden">
+      <ConfirmModal
+        isOpen={deleteConfirmation.isOpen}
+        title="Delete Survey"
+        message={`Delete survey "${deleteConfirmation.survey?.title}"?\n\nWARNING: All ${deleteConfirmation.survey?.captureCount || 0} associated photo captures and local media files will be cascade deleted immediately.`}
+        onConfirm={confirmDelete}
+        onClose={() => setDeleteConfirmation({ isOpen: false, survey: null })}
+      />
       {/* Top Banner */}
       <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border-b border-slate-800 shrink-0">
         <div className="max-w-5xl mx-auto space-y-3">

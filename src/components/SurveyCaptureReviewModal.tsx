@@ -35,7 +35,7 @@ export function SurveyCaptureReviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-slate-950/90 backdrop-blur-md">
+    <div className="fixed top-[86px] inset-x-0 bottom-0 z-50 flex items-center justify-center p-3 bg-slate-950/90 backdrop-blur-md">
       <div className="w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in duration-200">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/70">

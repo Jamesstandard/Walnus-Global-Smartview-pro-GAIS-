@@ -67,6 +67,7 @@ import {
 } from '../lib/imageReconstructionEngine';
 import { processVideoStreamTo3DGS } from '../lib/videoGaussianSplatEngine';
 import { Reconstruction3DModeControls } from './Reconstruction3DModeControls';
+import { Studio3DCanvas } from './Studio3DCanvas';
 
 export interface Generated3DModelMeta {
   modelName: string;
@@ -1719,7 +1720,7 @@ export function Neural3DGenerator({
     ? createPortal(
         <div
           id="neural-3d-fullscreen-portal"
-          className="fixed inset-0 z-[9999] w-screen h-screen bg-slate-950 overflow-hidden flex flex-col select-none"
+          className="fixed top-[86px] left-0 right-0 bottom-0 z-[9999] bg-slate-950 overflow-hidden flex flex-col select-none"
         >
           {/* Background Canvas */}
           <div className="absolute inset-0 w-full h-full z-0">
@@ -2243,6 +2244,22 @@ export function Neural3DGenerator({
   // -------------------------------------------------------------
   // PRIMARY COMPONENT RENDER
   // -------------------------------------------------------------
+  if (activeStudioMode === 'studio_scene') {
+    return (
+      <div className="fixed top-[86px] inset-x-0 bottom-0 z-50 bg-black flex flex-col">
+        <div className="flex-1 relative">
+          <Studio3DCanvas />
+          <button
+            onClick={() => setActiveStudioMode('image_to_3d')}
+            className="absolute top-4 left-4 p-2 bg-slate-900/80 text-white rounded-lg border border-slate-700 font-mono text-xs cursor-pointer z-[100]"
+          >
+            ← Back to Neural Generator
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Detached Full-Screen Portal */}

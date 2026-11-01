@@ -331,7 +331,7 @@ export function ContactsDrawer({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-40 flex bg-black/60 backdrop-blur-sm font-sans justify-end sm:justify-start">
+      <div className="fixed top-[86px] inset-x-0 bottom-0 z-40 flex bg-black/60 backdrop-blur-sm font-sans justify-end sm:justify-start">
         {/* Semi-transparent dark backdrop blur panel */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}

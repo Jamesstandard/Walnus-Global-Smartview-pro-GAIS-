@@ -227,7 +227,7 @@ export function WeatherCopilotSchedulerPanel({
               damping: 18,
               mass: 0.8,
             }}
-            className="fixed top-14 left-1/2 -translate-x-1/2 z-50 max-w-md w-[92%] p-3.5 rounded-2xl bg-slate-900/98 border border-amber-500/60 shadow-2xl backdrop-blur-md flex items-start gap-3 font-sans text-xs text-slate-200 select-none pointer-events-auto"
+            className="fixed top-[86px] left-1/2 -translate-x-1/2 z-50 max-w-md w-[92%] p-3.5 rounded-2xl bg-slate-900/98 border border-amber-500/60 shadow-2xl backdrop-blur-md flex items-start gap-3 font-sans text-xs text-slate-200 select-none pointer-events-auto"
             title="Weather notification"
           >
             <div

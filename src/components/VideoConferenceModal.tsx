@@ -492,7 +492,7 @@ export function VideoConferenceModal({
 
   // Full Screen / Standard Modal Video Conference View
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-150">
+    <div className="fixed top-[86px] inset-x-0 bottom-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-150">
       <div className="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-5xl h-[92vh] max-h-[820px] flex flex-col shadow-2xl overflow-hidden font-sans text-slate-200">
         
         {/* Conference Header Bar */}

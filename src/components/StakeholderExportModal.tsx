@@ -400,8 +400,8 @@ export function StakeholderExportModal({
   return (
     <AnimatePresence>
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-4 overflow-y-auto ${
-          isFullscreen ? 'p-0' : ''
+        className={`fixed top-[86px] inset-x-0 bottom-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-2 sm:p-4 overflow-y-auto ${
+          isFullscreen ? 'p-0 !top-0' : ''
         }`}
       >
         <motion.div

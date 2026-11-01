@@ -111,8 +111,8 @@ export function SurfaceVisualizerWorkspace({
       playSuccessSound();
       const aiReg: SurfaceSelectionRegion = {
         id: `reg_ai_${Date.now()}`,
-        name: `AI Detected Wall Façade`,
-        method: 'ai',
+        name: `AI Auto-Segment Structural Plane`,
+        method: 'ai_auto_segment',
         points: [
           { x: 80, y: 70 },
           { x: 320, y: 70 },
@@ -126,7 +126,7 @@ export function SurfaceVisualizerWorkspace({
       setProject((prev) => ({
         ...prev,
         regions: [...prev.regions, aiReg],
-        activeMethod: 'ai',
+        activeMethod: 'ai_auto_segment',
       }));
       setSelectedRegionId(aiReg.id);
     }, 1200);
@@ -139,7 +139,7 @@ export function SurfaceVisualizerWorkspace({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-2 sm:p-4 overflow-y-auto font-mono">
+    <div className="fixed top-[86px] inset-x-0 bottom-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-2 sm:p-4 overflow-y-auto font-mono">
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -265,42 +265,42 @@ export function SurfaceVisualizerWorkspace({
             </div>
 
             {/* Bottom Floating Canvas Mode Bar */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-950/90 border border-slate-800 px-4 py-2 rounded-2xl backdrop-blur-md flex items-center gap-3 text-xs shadow-xl">
-              <span className="text-slate-400">Selection Tool:</span>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-950/80 border border-slate-800/50 px-6 py-3 rounded-2xl backdrop-blur-md flex items-center gap-3 text-sm shadow-xl flex-wrap justify-center">
+              <span className="text-slate-400 font-mono hidden sm:inline">Selection Mode:</span>
               <button
                 type="button"
-                onClick={() => handleAddRegion('manual')}
-                className={`px-3 py-1 rounded-lg border font-bold transition-all cursor-pointer ${
-                  project.activeMethod === 'manual'
-                    ? 'bg-indigo-600 text-white border-indigo-400'
-                    : 'bg-slate-900 text-slate-300 border-slate-800'
+                onClick={() => handleAddRegion('paint_bucket')}
+                className={`px-5 py-3 rounded-xl border font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  project.activeMethod === 'paint_bucket'
+                    ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
+                    : 'bg-slate-900/50 text-slate-300 border-slate-800 hover:bg-slate-800'
                 }`}
               >
-                Manual Touch
+                <span>Paint Bucket</span>
               </button>
               <button
                 type="button"
-                onClick={() => handleAddRegion('polygon')}
-                className={`px-3 py-1 rounded-lg border font-bold transition-all cursor-pointer ${
-                  project.activeMethod === 'polygon'
-                    ? 'bg-indigo-600 text-white border-indigo-400'
-                    : 'bg-slate-900 text-slate-300 border-slate-800'
+                onClick={() => handleAddRegion('polygon_select')}
+                className={`px-5 py-3 rounded-xl border font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  project.activeMethod === 'polygon_select'
+                    ? 'bg-indigo-600 text-white border-indigo-400 shadow-md'
+                    : 'bg-slate-900/50 text-slate-300 border-slate-800 hover:bg-slate-800'
                 }`}
               >
-                Polygon Boundary
+                <span>Polygon Select</span>
               </button>
               <button
                 type="button"
                 onClick={handleRunAiSegmentation}
                 disabled={isAiProcessing}
-                className={`px-3 py-1 rounded-lg border font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  project.activeMethod === 'ai'
-                    ? 'bg-purple-600 text-white border-purple-400'
-                    : 'bg-purple-950/80 text-purple-300 border-purple-800'
+                className={`px-5 py-3 rounded-xl border font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  project.activeMethod === 'ai_auto_segment'
+                    ? 'bg-purple-600 text-white border-purple-400 shadow-md'
+                    : 'bg-purple-950/80 text-purple-300 border-purple-800 hover:bg-purple-900'
                 }`}
               >
-                <Sparkles className={`w-3.5 h-3.5 ${isAiProcessing ? 'animate-spin' : ''}`} />
-                <span>{isAiProcessing ? 'AI Segmenting...' : 'AI Segment'}</span>
+                <Sparkles className={`w-5 h-5 ${isAiProcessing ? 'animate-spin' : ''}`} />
+                <span>{isAiProcessing ? 'AI Segmenting...' : 'AI Auto-Segment'}</span>
               </button>
             </div>
           </div>
@@ -335,7 +335,7 @@ export function SurfaceVisualizerWorkspace({
                 </label>
                 <button
                   type="button"
-                  onClick={() => handleAddRegion('manual')}
+                  onClick={() => handleAddRegion('paint_bucket')}
                   className="px-2 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3 h-3" /> Add Region

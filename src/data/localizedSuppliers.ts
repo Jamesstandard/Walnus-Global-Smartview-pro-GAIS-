@@ -33,7 +33,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'SigmaSilox Hydro-Protect Exterior',
     standardSpec: 'DIN 4108-3 • EN 1504-2 Surface Barrier',
     category: 'High-Durability Exterior Coating',
-    spotPrice: 48.50,
+    spotPrice: 48500.00,
     unit: '15L Tub',
     currency: '₦',
     marketTrend: 'down',
@@ -64,7 +64,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'Loxon XP Pro Flexible Shield',
     standardSpec: 'ASTM D6904 Wind-Driven Rain • ASTM D412 Elongation',
     category: 'Crack-Bridging Waterproof Coating',
-    spotPrice: 56.20,
+    spotPrice: 56200.00,
     unit: '20L Pail',
     currency: '₦',
     marketTrend: 'stable',
@@ -95,7 +95,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'Sikagard-680S Pro-Coat Top',
     standardSpec: 'EN 1504-2 Class II • NACE Level 3 Certified',
     category: 'Heavy Industrial Protective Coating',
-    spotPrice: 74.00,
+    spotPrice: 74000.00,
     unit: '10L Kit',
     currency: '₦',
     marketTrend: 'up',
@@ -128,7 +128,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'Weber.therm Render Base Pro CS IV',
     standardSpec: 'BS EN 998-1:2016 CS IV • W2 Water Impermeability',
     category: 'High-Impact Substrate Base Plaster',
-    spotPrice: 18.40,
+    spotPrice: 18400.00,
     unit: '25kg Bag',
     currency: '₦',
     marketTrend: 'down',
@@ -159,7 +159,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'Parex Monorex GM Heritage Spec',
     standardSpec: 'BS EN 998-1 Class CS II • Reaction to Fire A1',
     category: 'One-Coat Through-Colour Finish Plaster',
-    spotPrice: 22.50,
+    spotPrice: 22500.00,
     unit: '25kg Bag',
     currency: '₦',
     marketTrend: 'stable',
@@ -190,7 +190,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'Baumit Klima RK 38 Bio-Lime Plaster',
     standardSpec: 'EN 459-1 NHL 3.5 • ISO 14001 Ecological Cert',
     category: 'Breathable Eco Lime Plaster',
-    spotPrice: 26.80,
+    spotPrice: 26800.00,
     unit: '25kg Bag',
     currency: '₦',
     marketTrend: 'down',
@@ -223,7 +223,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'Mapei WallSkim Eco 20 Plus',
     standardSpec: 'BS EN 998-1 Wall Screening Mortar • Ultra-Fine Grain',
     category: 'Interior Wall Screening Skim Mortar',
-    spotPrice: 21.90,
+    spotPrice: 21900.00,
     unit: '25kg Bag',
     currency: '₦',
     marketTrend: 'down',
@@ -254,7 +254,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'ARDEX W900 WeatherScreen Rapid Mortar',
     standardSpec: 'BS EN 998-1 Class CS IV • High Crack Resistance',
     category: 'Exterior Wall Screening Mortar',
-    spotPrice: 24.70,
+    spotPrice: 24700.00,
     unit: '25kg Bag',
     currency: '₦',
     marketTrend: 'up',
@@ -285,7 +285,7 @@ export const LOCALIZED_REGIONAL_MATERIALS: LocalizedRegionalMaterial[] = [
     tradeName: 'Knauf WallScreed Pro Polymer Mortar',
     standardSpec: 'DIN 18550 Wall Screening Spec • High Flexural Bond',
     category: 'Polymer Anti-Crack Wall Screen',
-    spotPrice: 27.50,
+    spotPrice: 27500.00,
     unit: '25kg Bag',
     currency: '₦',
     marketTrend: 'stable',
@@ -316,4 +316,12 @@ export function getLocalizedMaterialsByCategory(
 ): LocalizedRegionalMaterial[] {
   if (category === 'all') return LOCALIZED_REGIONAL_MATERIALS;
   return LOCALIZED_REGIONAL_MATERIALS.filter((m) => m.materialType === category);
+}
+
+export function getLocalizedMaterialsLocal(
+  category: 'all' | 'paint' | 'plaster' | 'screed',
+  radiusMiles: number = 50
+): LocalizedRegionalMaterial[] {
+  const materials = getLocalizedMaterialsByCategory(category);
+  return materials.filter((m) => m.distanceMiles <= radiusMiles);
 }

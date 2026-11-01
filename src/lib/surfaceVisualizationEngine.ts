@@ -4,7 +4,7 @@
  * Milestone: SV-006
  */
 
-export type SelectionMethod = 'manual' | 'polygon' | 'ai';
+export type SelectionMethod = 'paint_bucket' | 'polygon_select' | 'ai_auto_segment';
 
 export interface SurfaceSelectionRegion {
   id: string;
@@ -43,8 +43,8 @@ export function createDefaultVisualizationProject(captureId: string, imageSrc: s
     regions: [
       {
         id: 'reg_default_facade',
-        name: 'Main Wall Section',
-        method: 'manual',
+        name: 'Main Wall Section (Paint Bucket)',
+        method: 'paint_bucket',
         points: [
           { x: 100, y: 100 },
           { x: 300, y: 100 },
@@ -56,7 +56,7 @@ export function createDefaultVisualizationProject(captureId: string, imageSrc: s
         timestamp: Date.now(),
       },
     ],
-    activeMethod: 'manual',
+    activeMethod: 'paint_bucket',
     brushRadius: 40,
     lastUpdated: Date.now(),
   };

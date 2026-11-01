@@ -22,8 +22,8 @@ export function AnalysisRoutingView({ imageSrc, onSelectOption }: AnalysisRoutin
   }, []);
 
   return (
-    <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl font-sans">
-      <div className="relative aspect-[16/10] bg-black overflow-hidden flex flex-col items-center justify-center">
+    <div className="fixed top-[76px] inset-x-0 bottom-0 m-[10px] bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl font-sans flex flex-col">
+      <div className="relative flex-1 bg-black overflow-hidden flex flex-col items-center justify-center">
         <img src={imageSrc} alt="Captured Site" className="absolute inset-0 w-full h-full object-cover opacity-60" />
         
         <AnimatePresence>

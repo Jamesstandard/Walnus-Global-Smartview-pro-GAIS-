@@ -555,9 +555,9 @@ export function EstimatorApp({
   ];
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-slate-950 text-slate-100 font-sans hardware-accelerated select-none">
-      {/* Floating Tool Sidebar (Collapsible Vertical Pill on Right) */}
-      <div className="fixed right-2 top-20 z-30 flex flex-col items-center gap-1.5 bg-slate-950/80 backdrop-blur-md border border-slate-800/80 p-1.5 rounded-full shadow-xl">
+    <div className="w-full h-full relative overflow-hidden bg-slate-950 text-slate-100 font-sans hardware-accelerated select-none">
+      {/* Floating Tool Sidebar (Collapsible Vertical Pill on Right) - Positioned below 76px header + 10px margin */}
+      <div className="fixed right-2 top-[86px] z-30 flex flex-col items-center gap-1.5 bg-slate-950/80 backdrop-blur-md border border-slate-800/80 p-1.5 rounded-full shadow-xl">
         {/* Mode Toggle Button */}
         <button
           type="button"
@@ -627,7 +627,7 @@ export function EstimatorApp({
       </div>
 
       {/* Primary Full-Bleed Viewport Canvas or Sheet Content Container */}
-      <div className="fixed inset-0 w-full h-full z-0 overflow-hidden bg-slate-950">
+      <div className="absolute inset-0 w-full h-full z-0 overflow-hidden bg-slate-950">
         <AnimatePresence mode="wait">
           {/* PAGE: SURVEY WORKSPACE */}
           {activePage === 'WORKSPACE' && (
@@ -637,7 +637,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-16 pb-16 z-10 bg-slate-950 overflow-hidden"
+              className="absolute inset-0 pb-16 z-10 bg-slate-950 overflow-hidden"
             >
               {activeSurvey ? (
                 <SurveyWorkspace
@@ -672,7 +672,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-16 pb-16 z-10 bg-slate-950 overflow-hidden"
+              className="absolute inset-0 pb-16 z-10 bg-slate-950 overflow-hidden"
             >
               <SurveysDashboard
                 activeSurveyId={activeSurvey?.id || null}
@@ -693,7 +693,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-20 sm:pt-24 pb-16 px-2 z-10 overflow-hidden bg-slate-950 flex flex-col justify-center items-center"
+              className="absolute inset-0 pb-16 px-2 z-10 overflow-hidden bg-slate-950 flex flex-col justify-center items-center"
             >
               {isCameraOpen ? (
                 <CameraViewfinder
@@ -794,7 +794,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-20 sm:pt-24 pb-16 px-2 z-10 overflow-y-auto no-scrollbar bg-slate-950"
+              className="absolute inset-0 pb-16 px-2 z-10 overflow-y-auto no-scrollbar bg-slate-950"
             >
               <SurveyCaptureGallery
                 activeSurvey={activeSurvey}
@@ -817,7 +817,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-20 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
+              className="absolute inset-0 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
             >
               <div className="max-w-xl mx-auto space-y-3">
                 {capturedPhoto ? (
@@ -858,7 +858,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-20 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
+              className="absolute inset-0 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
             >
               <div className="max-w-xl mx-auto space-y-3">
                 <ProjectDesignationHoverCard
@@ -907,7 +907,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-20 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
+              className="absolute inset-0 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
             >
               <div className="max-w-xl mx-auto space-y-3">
                 <WeatherCopilotSchedulerPanel
@@ -944,7 +944,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-20 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
+              className="absolute inset-0 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
             >
               <div className="max-w-xl mx-auto space-y-3">
                 <MarketIntelligenceHUD
@@ -1015,7 +1015,7 @@ export function EstimatorApp({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="fixed inset-0 pt-20 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
+              className="absolute inset-0 pb-16 px-3 z-10 overflow-y-auto no-scrollbar bg-slate-950/90 backdrop-blur-md"
             >
               <div className="max-w-xl mx-auto space-y-3">
                 <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 space-y-3">
@@ -1078,7 +1078,7 @@ export function EstimatorApp({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-2 top-20 bottom-16 z-50 overflow-y-auto no-scrollbar max-w-2xl mx-auto shadow-2xl"
+            className="fixed inset-x-2 top-[86px] bottom-16 z-50 overflow-y-auto no-scrollbar max-w-2xl mx-auto shadow-2xl"
           >
             <ChemicalAnalysisSupplierHUD
               discipline={projectMode}
