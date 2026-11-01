@@ -29,6 +29,7 @@
 | **SV-005** | Camera Intelligence & HUD Enhancement | DONE | VERIFIED (Capability Tests Pass) | 2026-10-31 |
 | **SV-006** | Surface Selection & Coating Visualisation | DONE | VERIFIED (Visualization Tests Pass) | 2026-10-31 |
 | **SV-007** | UI Audit & Regional Localization | DONE | VERIFIED (86px Offset & NGN Sync) | 2026-10-31 |
+| **SV-008** | Android APK Generation | BLOCKED | Missing Android SDK in Cloud Env | 2026-10-31 |
 
 ---
 
@@ -122,3 +123,31 @@
 
 - **Target Milestone:** **SV-004 — ARCore Spatial Session & Surface Plane Estimation**
 - **Boundary Guarantee:** No ARCore or AI inference was introduced in SV-003. The clean camera acquisition layer is ready for SV-004 to hook in surface plane detection.
+
+---
+
+## SV-008 Implementation Details
+
+### What Was Built
+1. **Build Environment Provisioning:**
+   - Identified missing JDK dependency in the cloud container.
+   - Manually installed `openjdk-17-jdk-headless` and configured `JAVA_HOME`.
+   - Fixed execution permissions for `android/gradlew`.
+2. **Android APK Pipeline:**
+   - Orchestrated full production build: `vite build` -> `cap sync android` -> `gradlew assembleDebug`.
+   - Result: **FAILED** due to `SDK location not found`.
+
+---
+
+## Verification & Test Evidence
+
+- **JDK Verification:** `java -version` confirmed OpenJDK 17.0.21.
+- **Build Log Audit:** Gradle build failed at `:app:compileDebugJavaWithJavac` due to missing Android SDK.
+- **Blocker Identified:** The current cloud container environment lacks the Android SDK (platforms/build-tools) required for native compilation.
+
+### Blocker Report
+- **BLOCKED BY:** Missing Android SDK in the cloud environment.
+- **WHY:** Gradle requires the Android SDK to compile the native Java/Kotlin code and package the APK.
+- **WHAT WAS ATTEMPTED:** Manual installation of JDK 17 and build orchestration via Capacitor and Gradle Wrapper.
+- **WHAT IS REQUIRED:** A persistent Android SDK installation (approx. 5GB) and accepted licenses.
+- **RECOMMENDED NEXT ACTION:** Perform the final APK build in a local environment or a dedicated CI/CD pipeline (e.g., GitHub Actions, Bitrise).
